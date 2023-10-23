@@ -1,0 +1,52 @@
+{
+    "name": "pl_send_failed_alert",
+    "properties": {
+        "activities": [
+            {
+                "name": "Send fail mail",
+                "type": "WebActivity",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "00:10:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "url": {
+                        "value": "@pipeline().parameters.url",
+                        "type": "Expression"
+                    },
+                    "method": "POST",
+                    "body": {
+                        "value": "{\n    \"mailid\":\"@{pipeline().parameters.mailid}\",\n    \"title\": \"Pipeline @{pipeline().parameters.pipelinename} in @{pipeline().DataFactory} failed\",\n    \"message\": \"@{pipeline().parameters.errormsg}\",\n    \"color\": \"red\",\n    \"dataFactoryName\": \"@{pipeline().DataFactory}\",\n    \"pipelineName\": \"@{pipeline().parameters.pipelinename}\",\n    \"pipelineRunId\": \"@{pipeline().parameters.pipelinerunid}\",\n    \"time\": \"@{convertFromUtc(utcnow(), 'AUS Eastern Standard Time', 'yyyy-MM-ddTHH:mm:ss')}\"\n}",
+                        "type": "Expression"
+                    }
+                }
+            }
+        ],
+        "parameters": {
+            "errormsg": {
+                "type": "string"
+            },
+            "pipelinename": {
+                "type": "string"
+            },
+            "mailid": {
+                "type": "string"
+            },
+            "pipelinerunid": {
+                "type": "string"
+            },
+            "url": {
+                "type": "string"
+            }
+        },
+        "folder": {
+            "name": "Alert"
+        },
+        "annotations": []
+    }
+}
